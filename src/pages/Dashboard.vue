@@ -33,26 +33,9 @@
                 <h5 class="card-category">{{$t('dashboard.totalShipments')}}</h5>
                 <h2 class="card-title">{{$t('dashboard.performance')}}</h2>
               </div>
-              <div class="col-sm-6">
-                <div class="btn-group btn-group-toggle"
-                     :class="isRTL ? 'float-left' : 'float-right'"
-                     data-toggle="buttons">
-                  <label v-for="(option, index) in bigLineChartCategories"
-                         :key="option"
-                         class="btn btn-sm btn-primary btn-simple"
-                         :class="{active: bigLineChart.activeIndex === index}"
-                         :id="index">
-                    <input type="radio"
-                           @click="initBigChart(index)"
-                           name="options" autocomplete="off"
-                           :checked="bigLineChart.activeIndex === index">
-                    {{option}}
-                  </label>
-                </div>
-              </div>
             </div>
           </template>
-          <div class="chart-area">
+          <div class="chart-area" :key="keyBigChart">
             <line-chart style="height: 100%"
                         ref="bigChart"
                         chart-id="big-line-chart"
@@ -140,20 +123,31 @@
     },
     data() {
       return {
+        keyBigChart:0,
         tableData:[],
-        tableColumns:["ID","Email"],
+        tableColumns:["ID","Email","Date"],
         cropTableData:[],
         cropTableColumns:["ID","Name","Description","Hydrogen","Temperature","Water"],
+        dates:[],
         bigLineChart: {
-          allData: [
-            [100, 70, 90, 70, 85, 60, 75, 60, 90, 80, 110, 100],
-            [80, 120, 105, 110, 95, 105, 90, 100, 80, 95, 70, 120],
-            [60, 80, 65, 130, 80, 105, 90, 130, 70, 115, 60, 130]
-          ],
           activeIndex: 0,
           chartData: {
-            datasets: [{ }],
-            labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+            datasets: [{
+            fill: true,
+            borderColor: config.colors.primary,
+            borderWidth: 2,
+            borderDash: [],
+            borderDashOffset: 0.0,
+            pointBackgroundColor: config.colors.primary,
+            pointBorderColor: 'rgba(255,255,255,0)',
+            pointHoverBackgroundColor: config.colors.primary,
+            pointBorderWidth: 20,
+            pointHoverRadius: 4,
+            pointHoverBorderWidth: 15,
+            pointRadius: 4,
+            data: [],
+          }],
+            labels: [],
           },
           extraOptions: chartConfigs.purpleChartOptions,
           gradientColors: config.colors.primaryGradient,
@@ -236,31 +230,33 @@
       },
       bigLineChartCategories() {
         return this.$t('dashboard.chartCategories');
-      }
+      },
+    
     },
     methods: {
-      initBigChart(index) {
-        let chartData = {
-          datasets: [{
-            fill: true,
-            borderColor: config.colors.primary,
-            borderWidth: 2,
-            borderDash: [],
-            borderDashOffset: 0.0,
-            pointBackgroundColor: config.colors.primary,
-            pointBorderColor: 'rgba(255,255,255,0)',
-            pointHoverBackgroundColor: config.colors.primary,
-            pointBorderWidth: 20,
-            pointHoverRadius: 4,
-            pointHoverBorderWidth: 15,
-            pointRadius: 4,
-            data: this.bigLineChart.allData[index]
-          }],
-          labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-        }
-        this.$refs.bigChart.updateGradients(chartData);
-        this.bigLineChart.chartData = chartData;
-        this.bigLineChart.activeIndex = index;
+      calculateBigChartData(){
+        let numbers = [];
+        let temp = [];
+        this.dates.forEach((value,index)=>{
+          let toAdd = true;
+          for(const dateTemp of temp){
+           if(dateTemp==value){
+            temp.forEach((value,index)=>{
+              if(dateTemp==value){
+                toAdd = false;
+                numbers[index]++
+              }
+            });
+           } 
+          }
+          if(toAdd){
+             temp.push(value)
+             numbers.push(1);
+           }
+        });
+        this.bigLineChart.chartData.labels = temp;
+        this.bigLineChart.chartData.datasets[0].data = numbers;
+        this.keyBigChart++;
       }
     },
     beforeMount(){
@@ -271,34 +267,37 @@
           let currentObject = data[key];
           let user = {
             id:"",
-            email:""
+            email:"",
+            date:""
           }
           user.id = currentObject.id;
           user.email = currentObject.email;
+          user.date = currentObject.date;
+          this.dates.push(currentObject.date);
 
           this.tableData.push(user);
           if(currentObject.cultivos){
             this.cropTableData.push(...currentObject.cultivos)
           }
         }
-                   
+
+        this.calculateBigChartData();                   
       }).catch((error)=>{
         console.log(error);
       });
     },
     mounted() {
-      // this.i18n = this.$i18n;
-      // if (this.enableRTL) {
-      //   this.i18n.locale = 'ar';
-      //   this.$rtl.enableRTL();
-      // }
-      // this.initBigChart(0);
+      this.i18n = this.$i18n;
+      if (this.enableRTL) {
+        this.i18n.locale = 'ar';
+        this.$rtl.enableRTL();
+      }
     },
     beforeDestroy() {
-      // if (this.$rtl.isRTL) {
-      //   this.i18n.locale = 'en';
-      //   this.$rtl.disableRTL();
-      // }
+      if (this.$rtl.isRTL) {
+        this.i18n.locale = 'en';
+        this.$rtl.disableRTL();
+      }
     }
   };
 </script>

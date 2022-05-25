@@ -70,8 +70,8 @@ export let purpleChartOptions = {
         zeroLineColor: "transparent",
       },
       ticks: {
-        suggestedMin: 60,
-        suggestedMax: 125,
+        suggestedMin: 10,
+        suggestedMax: 15,
         padding: 20,
         fontColor: "#9a9a9a"
       }
