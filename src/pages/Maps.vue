@@ -1,217 +1,99 @@
 <template>
-    <card type="plain" title="Google Maps">
-      <div id="map" class="map">
+    <div class="row">
+      <div class="col-12">
+        <card class="card-plain">
+          <div class="table-full-width table-responsive">
+            <base-table title="KPIS" :data="tableData"
+                         :columns="tableColumns">
+
+            </base-table>
+          </div>
+        </card>
       </div>
-    </card>
+  </div>
 </template>
 <script>
+import Axios from 'axios';
+import { BaseTable } from "@/components";
 export default {
-  mounted() {
-    let myLatlng = new window.google.maps.LatLng(40.748817, -73.985428);
-    let mapOptions = {
-      zoom: 13,
-      center: myLatlng,
-      scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
-      styles: [{
-        "elementType": "geometry",
-        "stylers": [{
-          "color": "#1d2c4d"
-        }]
-      },
+  components:{
+    BaseTable
+  },
+  data(){
+    return{
+      tableData:[
         {
-          "elementType": "labels.text.fill",
-          "stylers": [{
-            "color": "#8ec3b9"
-          }]
+          nombre:"Calificaciones de la aplicación por usuarios",
+          valor:0,
+          medida:"Puntuacion"
         },
         {
-          "elementType": "labels.text.stroke",
-          "stylers": [{
-            "color": "#1a3646"
-          }]
+          nombre:"Cantidad de usuarios creados ",
+          valor:0,
+          medida:"Puntuacion"
         },
         {
-          "featureType": "administrative.country",
-          "elementType": "geometry.stroke",
-          "stylers": [{
-            "color": "#4b6878"
-          }]
+          nombre:"Cantidad de cultivos registrados ",
+          valor:0,
+          medida:"Puntuacion"
         },
         {
-          "featureType": "administrative.land_parcel",
-          "elementType": "labels.text.fill",
-          "stylers": [{
-            "color": "#64779e"
-          }]
+          nombre:"Promedio de tiempo de los cultivos",
+          valor:0,
+          medida:"Puntuacion"
         },
         {
-          "featureType": "administrative.province",
-          "elementType": "geometry.stroke",
-          "stylers": [{
-            "color": "#4b6878"
-          }]
+          nombre:"Cantidad de agua promedio por cultivo",
+          valor:0,
+          medida:"Puntuacion"
         },
-        {
-          "featureType": "landscape.man_made",
-          "elementType": "geometry.stroke",
-          "stylers": [{
-            "color": "#334e87"
-          }]
-        },
-        {
-          "featureType": "landscape.natural",
-          "elementType": "geometry",
-          "stylers": [{
-            "color": "#023e58"
-          }]
-        },
-        {
-          "featureType": "poi",
-          "elementType": "geometry",
-          "stylers": [{
-            "color": "#283d6a"
-          }]
-        },
-        {
-          "featureType": "poi",
-          "elementType": "labels.text.fill",
-          "stylers": [{
-            "color": "#6f9ba5"
-          }]
-        },
-        {
-          "featureType": "poi",
-          "elementType": "labels.text.stroke",
-          "stylers": [{
-            "color": "#1d2c4d"
-          }]
-        },
-        {
-          "featureType": "poi.park",
-          "elementType": "geometry.fill",
-          "stylers": [{
-            "color": "#023e58"
-          }]
-        },
-        {
-          "featureType": "poi.park",
-          "elementType": "labels.text.fill",
-          "stylers": [{
-            "color": "#3C7680"
-          }]
-        },
-        {
-          "featureType": "road",
-          "elementType": "geometry",
-          "stylers": [{
-            "color": "#304a7d"
-          }]
-        },
-        {
-          "featureType": "road",
-          "elementType": "labels.text.fill",
-          "stylers": [{
-            "color": "#98a5be"
-          }]
-        },
-        {
-          "featureType": "road",
-          "elementType": "labels.text.stroke",
-          "stylers": [{
-            "color": "#1d2c4d"
-          }]
-        },
-        {
-          "featureType": "road.highway",
-          "elementType": "geometry",
-          "stylers": [{
-            "color": "#2c6675"
-          }]
-        },
-        {
-          "featureType": "road.highway",
-          "elementType": "geometry.fill",
-          "stylers": [{
-            "color": "#9d2a80"
-          }]
-        },
-        {
-          "featureType": "road.highway",
-          "elementType": "geometry.stroke",
-          "stylers": [{
-            "color": "#9d2a80"
-          }]
-        },
-        {
-          "featureType": "road.highway",
-          "elementType": "labels.text.fill",
-          "stylers": [{
-            "color": "#b0d5ce"
-          }]
-        },
-        {
-          "featureType": "road.highway",
-          "elementType": "labels.text.stroke",
-          "stylers": [{
-            "color": "#023e58"
-          }]
-        },
-        {
-          "featureType": "transit",
-          "elementType": "labels.text.fill",
-          "stylers": [{
-            "color": "#98a5be"
-          }]
-        },
-        {
-          "featureType": "transit",
-          "elementType": "labels.text.stroke",
-          "stylers": [{
-            "color": "#1d2c4d"
-          }]
-        },
-        {
-          "featureType": "transit.line",
-          "elementType": "geometry.fill",
-          "stylers": [{
-            "color": "#283d6a"
-          }]
-        },
-        {
-          "featureType": "transit.station",
-          "elementType": "geometry",
-          "stylers": [{
-            "color": "#3a4762"
-          }]
-        },
-        {
-          "featureType": "water",
-          "elementType": "geometry",
-          "stylers": [{
-            "color": "#0e1626"
-          }]
-        },
-        {
-          "featureType": "water",
-          "elementType": "labels.text.fill",
-          "stylers": [{
-            "color": "#4e6d70"
-          }]
+      ],
+      tableColumns:["Nombre","valor","Medida"],
+    }
+  },
+  beforeMount(){
+    Axios.get("https://optipapa-c3caa-default-rtdb.firebaseio.com/users.json").then((value)=>{
+        let data = value.data;
+        let tiempoPromedio = 0;     
+        let aguaPromedio = 0;     
+        let totalCultivos = 0;      
+        for(var key of Object.keys(data)){
+          let currentObject = data[key];
+          let user = {
+            id:"",
+            email:"",
+            date:"",
+            rating:0
+          }
+          user.id = currentObject.id;
+          user.email = currentObject.email;
+          user.date = currentObject.date;
+          user.rating = currentObject.rating;
+
+          
+          this.tableData[0].valor++;
+          this.tableData[1].valor++;
+          this.tableData[2].valor+=3; 
+
+          currentObject.cultivos.forEach(element => {
+            tiempoPromedio += element.time;
+            aguaPromedio += element.water;
+
+            totalCultivos++;
+          });
+
         }
-      ]
-    };
-    let map = new window.google.maps.Map(
-      document.getElementById("map"),
-      mapOptions
-    );
 
-    let marker = new window.google.maps.Marker({
-      position: myLatlng,
-      title: "Hello World!"
-    });
+        
+        
+        this.tableData[3].valor = Math.floor(tiempoPromedio/=totalCultivos);
+        this.tableData[4].valor = Math.floor(aguaPromedio/=totalCultivos);
 
-    // To add the marker to the map, call setMap();
-    marker.setMap(map);
+
+        
+      }).catch((error)=>{
+        console.log(error);
+      });
   }
 };
 </script>

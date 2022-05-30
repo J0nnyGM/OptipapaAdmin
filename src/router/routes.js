@@ -19,7 +19,7 @@ const routes = [
     children: [
       {
         path: "dashboard",
-        name: "dashboard",
+        name: "graficas",
         component: Dashboard
       },
       {
@@ -34,12 +34,12 @@ const routes = [
       },
       {
         path: "icons",
-        name: "icons",
+        name: "Tablas",
         component: Icons
       },
       {
         path: "maps",
-        name: "maps",
+        name: "KPI'S",
         component: Maps
       },
       {
